@@ -475,10 +475,16 @@
       .nav-links { display: none; }
       .hamburger { display: flex; }
       nav { padding: 0 20px; }
-      .nav-logo { font-size: 16px; }
+      /* На мобілці: логотип ховаємо, гамбургер залишається справа */
+      .nav-logo { display: none; }
 
-      /* Lang bar — move left so it doesn't overlap hamburger */
-      .lang-bar { right: auto; left: 20px; top: 16px; }
+      /* Lang bar — зверху по центру */
+      .lang-bar {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 14px;
+      }
 
       /* Side dots — hide */
       .side-dots { display: none; }
@@ -832,7 +838,7 @@
           </a>
         </div>
         <p style="margin-top:48px;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.06em">
-          © 2025 Мария Литвинская —
+          © 2026ия Литвинская —
           <span data-lang="ru" class="visible">Психолог-консультант</span>
           <span data-lang="en">Psychologist</span>
         </p>

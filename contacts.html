@@ -527,15 +527,16 @@
             <!-- GitHub Pages не має бекенду — форма відправляє через Formspree.
                  Замінити YOUR_FORM_ID на реальний ID з formspree.io -->
             <form id="contactForm"
-                  action="https://formspree.io/f/mqevbyly"
-                  method="POST">
+                  action="https://formspree.io/f/YOUR_FORM_ID"
+                  method="POST"
+                  autocomplete="off">
 
               <div class="field">
                 <label>
                   <span data-lang="ru" class="visible">Ваше имя</span>
                   <span data-lang="en">Your name</span>
                 </label>
-                <input type="text" name="name" required
+                <input type="text" name="Имя" required
                   placeholder="Имя / Name" />
               </div>
 
@@ -544,7 +545,7 @@
                   <span data-lang="ru" class="visible">Email или Telegram</span>
                   <span data-lang="en">Email or Telegram</span>
                 </label>
-                <input type="text" name="contact" required
+                <input type="text" name="Контакт (email или Telegram)" required
                   placeholder="email@example.com / @telegram" />
               </div>
 
@@ -553,13 +554,13 @@
                   <span data-lang="ru" class="visible">Удобное время</span>
                   <span data-lang="en">Preferred time</span>
                 </label>
-                <select name="time">
+                <select name="Удобное время">
                   <option value="" disabled selected>
                   </option>
-                  <option value="morning" data-ru="Утро (9–12)" data-en="Morning (9–12)"></option>
-                  <option value="day" data-ru="День (12–17)" data-en="Afternoon (12–17)"></option>
-                  <option value="evening" data-ru="Вечер (17–21)" data-en="Evening (17–21)"></option>
-                  <option value="flexible" data-ru="Гибкое расписание" data-en="Flexible"></option>
+                  <option value="Утро (9–12)" data-ru="Утро (9–12)" data-en="Morning (9–12)"></option>
+                  <option value="День (12–17)" data-ru="День (12–17)" data-en="Afternoon (12–17)"></option>
+                  <option value="Вечер (17–21)" data-ru="Вечер (17–21)" data-en="Evening (17–21)"></option>
+                  <option value="Гибкое расписание" data-ru="Гибкое расписание" data-en="Flexible"></option>
                 </select>
               </div>
 
@@ -568,7 +569,7 @@
                   <span data-lang="ru" class="visible">Тема или вопрос (необязательно)</span>
                   <span data-lang="en">Topic or question (optional)</span>
                 </label>
-                <textarea name="message"
+                <textarea name="Сообщение"
                   placeholder="..."></textarea>
               </div>
 
@@ -608,7 +609,7 @@
     </div>
   </div>
 
-  <p class="page-footer">© 2025 Мария Литвинская — Психолог</p>
+  <p class="page-footer">©  2026 Мария Литвинская — Психолог</p>
 
   <script>
     /* ── i18n ── */
@@ -636,8 +637,11 @@
 
     // Init option text + select placeholder
     document.querySelectorAll('option[data-ru]').forEach(o => { o.textContent = o.dataset.ru; });
-    document.querySelector('select[name="time"]').options[0].text = 'Выберите время';
+    document.querySelector('select[name="Удобное время"]').options[0].text = 'Выберите время';
     document.querySelector('input[name="_subject"]').value = 'Новая заявка с сайта';
+
+    // Очистити форму при завантаженні сторінки (щоб браузер не відновлював старі дані)
+    document.getElementById('contactForm').reset();
 
     /* ── FORM SUBMIT ── */
     const form = document.getElementById('contactForm');
@@ -654,6 +658,7 @@
           headers: { 'Accept': 'application/json' }
         });
         if (res.ok) {
+          form.reset(); // очистити поля
           document.getElementById('formWrap').style.display = 'none';
           const suc = document.getElementById('formSuccess');
           suc.classList.add('show');
