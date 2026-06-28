@@ -522,12 +522,18 @@
               <span data-lang="en">Leave a request — I'll get in touch to confirm.</span>
             </p>
 
-            <!-- GitHub Pages не має бекенду — форма відправляє через Formspree.
-                 Замінити YOUR_FORM_ID на реальний ID з formspree.io -->
+            <!-- Web3Forms — безкоштовно, необмежено -->
             <form id="contactForm"
-                  action="https://formspree.io/f/mqevbyly"
+                  action="https://api.web3forms.com/submit"
                   method="POST"
                   autocomplete="off">
+
+              <!-- Web3Forms access key -->
+              <input type="hidden" name="access_key" value="2aea516b-1b1e-4ea4-97cb-faa7b85a7766">
+              <!-- Тема листа -->
+              <input type="hidden" name="subject" value="Новая заявка с сайта Марии">
+              <!-- Redirect після відправки (залишаємо порожнім — обробляємо JS) -->
+              <input type="hidden" name="redirect" value="false">
 
               <div class="field">
                 <label>
@@ -571,11 +577,8 @@
                   placeholder="..."></textarea>
               </div>
 
-              <!-- Honeypot anti-spam -->
-              <input type="text" name="_gotcha" style="display:none">
-              <input type="hidden" name="_subject"
-                data-ru="Новая заявка с сайта"
-                data-en="New booking request">
+              <!-- Honeypot anti-spam (Web3Forms підтримує) -->
+              <input type="checkbox" name="botcheck" style="display:none">
 
               <p class="form-note">
                 <span data-lang="ru" class="visible">Нажимая кнопку, вы соглашаетесь на обратную связь от меня для уточнения деталей.</span>
@@ -607,7 +610,7 @@
     </div>
   </div>
 
-  <p class="page-footer">© 2026 Мария Литвинская — Психолог</p>
+  <p class="page-footer">© 2025 Мария Литвинская — Психолог</p>
 
   <script>
     /* ── i18n ── */
@@ -636,9 +639,8 @@
     // Init option text + select placeholder
     document.querySelectorAll('option[data-ru]').forEach(o => { o.textContent = o.dataset.ru; });
     document.querySelector('select[name="Удобное время"]').options[0].text = 'Выберите время';
-    document.querySelector('input[name="_subject"]').value = 'Новая заявка с сайта';
 
-    // Очистити форму при завантаженні сторінки (щоб браузер не відновлював старі дані)
+    // Очистити форму при завантаженні
     document.getElementById('contactForm').reset();
 
     /* ── FORM SUBMIT ── */
@@ -655,22 +657,25 @@
           body: new FormData(form),
           headers: { 'Accept': 'application/json' }
         });
-        if (res.ok) {
-          form.reset(); // очистити поля
+        const data = await res.json();
+        if (data.success) {
+          form.reset();
           document.getElementById('formWrap').style.display = 'none';
           const suc = document.getElementById('formSuccess');
           suc.classList.add('show');
+          const lang = document.getElementById('btn-ru').classList.contains('active') ? 'ru' : 'en';
           document.querySelectorAll('#formSuccess [data-lang]').forEach(el => {
-            el.classList.toggle('visible', el.dataset.lang === (document.getElementById('btn-ru').classList.contains('active') ? 'ru' : 'en'));
+            el.classList.toggle('visible', el.dataset.lang === lang);
           });
         } else {
           btn.style.opacity = '1';
           btn.disabled = false;
-          alert('Что-то пошло не так. Напишите напрямую на email.');
+          alert('Что-то пошло не так. Напишите напрямую.');
         }
       } catch {
         btn.style.opacity = '1';
         btn.disabled = false;
+        alert('Ошибка соединения. Попробуйте ещё раз.');
       }
     });
   </script>
