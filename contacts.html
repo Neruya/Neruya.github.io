@@ -70,15 +70,15 @@
     }
     .nav-logo {
       font-family: var(--font-d);
-      font-size: 20px;
+      font-size: 26px;
       font-weight: 400;
       color: rgba(255,255,255,.85);
       text-decoration: none;
     }
     .nav-back {
-      font-size: 12px;
+      font-size: 16px;
       font-weight: 400;
-      letter-spacing: .1em;
+      letter-spacing: .08em;
       text-transform: uppercase;
       color: rgba(255,255,255,.45);
       text-decoration: none;
@@ -88,14 +88,12 @@
       transition: color .2s;
     }
     .nav-back:hover { color: rgba(255,255,255,.85); }
-    .nav-back::before { content: '←'; font-size: 14px; }
+    .nav-back::before { content: '←'; font-size: 18px; }
 
     /* ── LANG ── */
     .lang-bar {
-      position: fixed;
-      top: 18px; right: 28px;
-      z-index: 101;
-      display: flex; gap: 2px;
+      display: flex;
+      gap: 2px;
       background: rgba(255,255,255,.08);
       backdrop-filter: blur(6px);
       border: 1px solid rgba(255,255,255,.15);
@@ -103,9 +101,9 @@
       padding: 3px;
     }
     .lang-btn {
-      font-family: var(--font-b); font-size: 12px; font-weight: 500; letter-spacing: .06em;
+      font-family: var(--font-b); font-size: 13px; font-weight: 500; letter-spacing: .06em;
       color: rgba(255,255,255,.5); background: transparent; border: none;
-      border-radius: 16px; padding: 4px 12px; cursor: pointer;
+      border-radius: 16px; padding: 5px 14px; cursor: pointer;
       transition: background .2s, color .2s;
     }
     .lang-btn.active { background: var(--sage); color: #fff; }
@@ -379,10 +377,10 @@
     @media (max-width: 768px) {
       body { overflow: auto; }
 
-      .lang-bar { right: auto; left: 20px; top: 16px; }
+      /* Nav: логотип зліва, lang по центру, стрілка справа */
       nav { padding: 0 20px; }
-      .nav-logo { font-size: 16px; }
-      .nav-back { font-size: 11px; }
+      .nav-logo { display: none; }
+      .nav-back { font-size: 13px; letter-spacing: .06em; flex-shrink: 0; }
 
       .page-wrap {
         align-items: flex-start;
@@ -419,17 +417,17 @@
   <!-- NAV -->
   <nav>
     <a href="index.html" class="nav-logo">Мария Литвинская</a>
-    <a href="index.html" class="nav-back">
-      <span data-lang="ru" class="visible">На главную</span>
-      <span data-lang="en">Back home</span>
-    </a>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <a href="index.html" class="nav-back">
+        <span data-lang="ru" class="visible">На главную</span>
+        <span data-lang="en">Back home</span>
+      </a>
+      <div class="lang-bar">
+        <button class="lang-btn active" onclick="setLang('ru')" id="btn-ru">RU</button>
+        <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+      </div>
+    </div>
   </nav>
-
-  <!-- LANG -->
-  <div class="lang-bar">
-    <button class="lang-btn active" onclick="setLang('ru')" id="btn-ru">RU</button>
-    <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
-  </div>
 
   <!-- MAIN -->
   <div class="page-wrap">
@@ -527,7 +525,7 @@
             <!-- GitHub Pages не має бекенду — форма відправляє через Formspree.
                  Замінити YOUR_FORM_ID на реальний ID з formspree.io -->
             <form id="contactForm"
-                  action="https://formspree.io/f/YOUR_FORM_ID"
+                  action="https://formspree.io/f/mqevbyly"
                   method="POST"
                   autocomplete="off">
 

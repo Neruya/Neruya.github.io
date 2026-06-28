@@ -343,7 +343,7 @@
     }
     .nav-logo {
       font-family: var(--font-d);
-      font-size: 20px;
+      font-size: 26px;
       font-weight: 400;
       color: #fff;
       letter-spacing: .02em;
@@ -354,9 +354,9 @@
       list-style: none;
     }
     .nav-links a {
-      font-size: 12px;
+      font-size: 15px;
       font-weight: 400;
-      letter-spacing: .1em;
+      letter-spacing: .08em;
       text-transform: uppercase;
       color: rgba(255,255,255,.6);
       transition: color .2s;
@@ -368,10 +368,8 @@
        LANG
     ═══════════════════════════════════════════ */
     .lang-bar {
-      position: fixed;
-      top: 18px; right: 28px;
-      z-index: 101;
-      display: flex; gap: 2px;
+      display: flex;
+      gap: 2px;
       background: rgba(255,255,255,.1);
       backdrop-filter: blur(6px);
       border: 1px solid rgba(255,255,255,.2);
@@ -475,16 +473,8 @@
       .nav-links { display: none; }
       .hamburger { display: flex; }
       nav { padding: 0 20px; }
-      /* На мобілці: логотип ховаємо, гамбургер залишається справа */
+      /* На мобілці: логотип ховаємо, гамбургер і lang залишаються справа */
       .nav-logo { display: none; }
-
-      /* Lang bar — зверху по центру */
-      .lang-bar {
-        right: auto;
-        left: 50%;
-        transform: translateX(-50%);
-        top: 14px;
-      }
 
       /* Side dots — hide */
       .side-dots { display: none; }
@@ -561,9 +551,15 @@
       <li><a href="#" onclick="scrollToPanel(3);return false;" data-ru="Запросы" data-en="Issues"></a></li>
       <li><a href="contacts.html" data-ru="Контакты" data-en="Contacts"></a></li>
     </ul>
-    <button class="hamburger" id="hamburger" aria-label="Меню" onclick="toggleMenu()">
-      <span></span><span></span><span></span>
-    </button>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="lang-bar">
+        <button class="lang-btn active" onclick="setLang('ru')" id="btn-ru">RU</button>
+        <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Меню" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </nav>
 
   <!-- MOBILE MENU -->
@@ -573,12 +569,6 @@
     <a href="#" onclick="scrollToPanel(2);closeMenu();return false;" data-ru="Методы" data-en="Methods"></a>
     <a href="#" onclick="scrollToPanel(3);closeMenu();return false;" data-ru="Запросы" data-en="Issues"></a>
     <a href="contacts.html" data-ru="Контакты" data-en="Contacts"></a>
-  </div>
-
-  <!-- LANG -->
-  <div class="lang-bar">
-    <button class="lang-btn active" onclick="setLang('ru')" id="btn-ru">RU</button>
-    <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
   </div>
 
   <!-- SIDE DOTS -->
