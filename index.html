@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мария Литвинская — Психолог</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sage:       #7A9E87;
+      --sage-light: #D0E3D6;
+      --gold:       #C9A84C;
+      --border:     rgba(255,255,255,.18);
+      --font-d: 'Cormorant Garamond', Georgia, serif;
+      --font-b: 'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-b);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      background: #111;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════════
+       SCROLL CONTAINER
+    ═══════════════════════════════════════════ */
+    .scroll-wrap {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+    /* Hide scrollbar but keep function */
+    .scroll-wrap::-webkit-scrollbar { display: none; }
+    .scroll-wrap { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ═══════════════════════════════════════════
+       PANELS
+    ═══════════════════════════════════════════ */
+    .panel {
+      height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* BG photo layer */
+    .panel-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.08);
+      transition: transform 1.2s cubic-bezier(.25,.46,.45,.94);
+      will-change: transform;
+    }
+    /* Placeholder gradients — replace with real img:
+       <img src="photo.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"> */
+    .panel-bg.bg1 { background: linear-gradient(160deg,#2a4a38 0%,#1a3028 50%,#0e1e18 100%); }
+    .panel-bg.bg2 { background: linear-gradient(140deg,#1e2820 0%,#2d4535 50%,#1a2e24 100%); }
+    .panel-bg.bg3 { background: linear-gradient(150deg,#2e2416 0%,#3d3020 50%,#1e1810 100%); }
+    .panel-bg.bg4 { background: linear-gradient(155deg,#151e18 0%,#243328 50%,#0e1612 100%); }
+    .panel-bg.bg5 { background: linear-gradient(145deg,#1a1e2e 0%,#252d40 50%,#111824 100%); }
+
+    /* overlay */
+    .panel-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,.12) 0%,
+        rgba(0,0,0,.45) 50%,
+        rgba(0,0,0,.68) 100%
+      );
+    }
+
+    /* zoom on active */
+    .panel.is-active .panel-bg {
+      transform: scale(1.0);
+    }
+
+    /* ═══════════════════════════════════════════
+       PANEL CONTENT
+    ═══════════════════════════════════════════ */
+    .panel-content {
+      position: relative;
+      z-index: 2;
+      color: #fff;
+      text-align: center;
+      padding: 0 28px;
+      max-width: 860px;
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .9s ease .2s, transform .9s ease .2s;
+    }
+    .panel.is-active .panel-content {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* eyebrow */
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--sage-light);
+      margin-bottom: 18px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .7s ease .5s, transform .7s ease .5s;
+    }
+    .panel.is-active .eyebrow { opacity: 1; transform: translateY(0); }
+
+    /* headline */
+    .panel-title {
+      font-family: var(--font-d);
+      font-size: clamp(44px, 7vw, 88px);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-bottom: 22px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .8s ease .35s, transform .8s ease .35s;
+    }
+    .panel.is-active .panel-title { opacity: 1; transform: translateY(0); }
+
+    .panel-title em {
+      font-style: italic;
+      color: var(--sage-light);
+    }
+
+    /* body text */
+    .panel-text {
+      font-size: 16px;
+      color: rgba(255,255,255,.75);
+      max-width: 560px;
+      margin: 0 auto 32px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .8s ease .5s, transform .8s ease .5s;
+    }
+    .panel.is-active .panel-text { opacity: 1; transform: translateY(0); }
+
+    /* tags / pills */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 32px;
+      opacity: 0;
+      transition: opacity .8s ease .6s;
+    }
+    .panel.is-active .pill-row { opacity: 1; }
+    .pill {
+      padding: 7px 18px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 24px;
+      font-size: 13px;
+      color: rgba(255,255,255,.85);
+      backdrop-filter: blur(4px);
+      background: rgba(255,255,255,.06);
+    }
+    .pill.gold { border-color: var(--gold); color: var(--gold); }
+
+    /* divider line */
+    .panel-line {
+      width: 40px;
+      height: 1px;
+      background: var(--sage);
+      margin: 0 auto 24px;
+      opacity: 0;
+      transition: opacity .6s ease .4s, width .6s ease .4s;
+    }
+    .panel.is-active .panel-line { opacity: 1; width: 60px; }
+
+    /* buttons */
+    .btn-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      transition: opacity .8s ease .65s;
+    }
+    .panel.is-active .btn-row { opacity: 1; }
+    .btn {
+      display: inline-block;
+      padding: 13px 32px;
+      font-family: var(--font-b);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: opacity .2s;
+      text-decoration: none;
+    }
+    .btn:hover { opacity: .75; }
+    .btn-light { background: #fff; color: #1a1a1a; }
+    .btn-ghost { border: 1.5px solid rgba(255,255,255,.5); color: #fff; }
+
+    /* left-align variant */
+    .panel-content.left {
+      text-align: left;
+      margin-right: auto;
+      margin-left: 6vw;
+    }
+    .panel-content.left .panel-line { margin: 0 0 24px; }
+    .panel-content.left .btn-row { justify-content: flex-start; }
+    .panel-content.left .pill-row { justify-content: flex-start; }
+    .panel-content.left .panel-text { margin-left: 0; }
+
+    /* grid variant (about) */
+    .panel-content.grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      text-align: left;
+      align-items: center;
+      max-width: 1000px;
+    }
+    .panel-content.grid-2 .panel-line { margin: 0 0 22px; }
+    .panel-content.grid-2 .btn-row { justify-content: flex-start; }
+
+    /* photo frame inside grid */
+    .photo-frame {
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+      /* Placeholder: */
+      background: linear-gradient(160deg, rgba(122,158,135,.5) 0%, rgba(78,122,96,.3) 100%);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .photo-frame-label {
+      position: absolute;
+      bottom: 16px; left: 16px;
+      font-size: 11px;
+      color: rgba(255,255,255,.5);
+      letter-spacing: .08em;
+    }
+    /* Real photo: <img src="photo.jpg" style="width:100%;height:100%;object-fit:cover"> */
+
+    /* creds list */
+    .cred-list { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+    .cred-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .cred-item:last-child { border-bottom: none; }
+    .cred-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--sage); flex-shrink: 0; margin-top: 8px;
+    }
+    .cred-label { font-size: 11px; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 2px; }
+    .cred-val { font-size: 14px; color: rgba(255,255,255,.85); }
+
+    /* number stat row */
+    .stat-row {
+      display: flex;
+      gap: 48px;
+      margin: 28px 0;
+      opacity: 0;
+      transition: opacity .8s ease .55s;
+    }
+    .panel.is-active .stat-row { opacity: 1; }
+    .stat-num {
+      font-family: var(--font-d);
+      font-size: 52px;
+      font-weight: 300;
+      color: var(--sage-light);
+      line-height: 1;
+    }
+    .stat-label { font-size: 12px; color: rgba(255,255,255,.5); letter-spacing: .06em; margin-top: 4px; }
+
+    /* ═══════════════════════════════════════════
+       CORNER SCROLL INDICATOR
+    ═══════════════════════════════════════════ */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,.45);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      transition: opacity .4s;
+      pointer-events: none;
+    }
+    .scroll-mouse {
+      width: 22px; height: 34px;
+      border: 1.5px solid rgba(255,255,255,.3);
+      border-radius: 11px;
+      display: flex;
+      justify-content: center;
+      padding-top: 5px;
+    }
+    .scroll-wheel {
+      width: 3px; height: 7px;
+      background: rgba(255,255,255,.5);
+      border-radius: 2px;
+      animation: scrollWheel 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollWheel {
+      0%   { transform: translateY(0); opacity: 1; }
+      80%  { transform: translateY(9px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 0; }
+    }
+
+    /* ═══════════════════════════════════════════
+       NAV
+    ═══════════════════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-d);
+      font-size: 20px;
+      font-weight: 400;
+      color: #fff;
+      letter-spacing: .02em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.6);
+      transition: color .2s;
+      text-decoration: none;
+    }
+    .nav-links a:hover { color: #fff; }
+
+    /* ═══════════════════════════════════════════
+       LANG
+    ═══════════════════════════════════════════ */
+    .lang-bar {
+      position: fixed;
+      top: 18px; right: 28px;
+      z-index: 101;
+      display: flex; gap: 2px;
+      background: rgba(255,255,255,.1);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 20px;
+      padding: 3px;
+    }
+    .lang-btn {
+      font-family: var(--font-b); font-size: 12px; font-weight: 500; letter-spacing: .06em;
+      color: rgba(255,255,255,.6); background: transparent; border: none;
+      border-radius: 16px; padding: 4px 12px; cursor: pointer;
+      transition: background .2s, color .2s;
+    }
+    .lang-btn.active { background: var(--sage); color: #fff; }
+
+    /* ═══════════════════════════════════════════
+       SIDE DOTS (panel nav)
+    ═══════════════════════════════════════════ */
+    .side-dots {
+      position: fixed;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .side-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.28);
+      border: none;
+      cursor: pointer;
+      transition: background .25s, transform .25s;
+    }
+    .side-dot.active {
+      background: var(--sage-light);
+      transform: scale(1.4);
+    }
+
+    /* ═══════════════════════════════════════════
+       i18n
+    ═══════════════════════════════════════════ */
+    [data-lang] { display: none; }
+    [data-lang].visible { display: block; }
+    span[data-lang].visible { display: inline; }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — MOBILE
+    ═══════════════════════════════════════════ */
+
+    /* Hamburger button (mobile only) */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      z-index: 102;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 1.5px;
+      background: rgba(255,255,255,.8);
+      border-radius: 2px;
+      transition: transform .3s, opacity .3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile nav drawer */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: rgba(10,20,14,.97);
+      backdrop-filter: blur(12px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-d);
+      font-size: 36px;
+      font-weight: 300;
+      color: rgba(255,255,255,.85);
+      text-decoration: none;
+      letter-spacing: .02em;
+      transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--sage-light); }
+
+    @media (max-width: 768px) {
+      /* Nav */
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      nav { padding: 0 20px; }
+      .nav-logo { font-size: 16px; }
+
+      /* Lang bar — move left so it doesn't overlap hamburger */
+      .lang-bar { right: auto; left: 20px; top: 16px; }
+
+      /* Side dots — hide */
+      .side-dots { display: none; }
+
+      /* Scroll hint */
+      .scroll-indicator { bottom: 16px; }
+
+      /* Panel content — center, full width */
+      .panel-content {
+        padding: 0 22px;
+        max-width: 100%;
+      }
+      .panel-content.left {
+        margin-left: 0;
+        text-align: center;
+      }
+      .panel-content.left .panel-line { margin: 0 auto 22px; }
+      .panel-content.left .btn-row { justify-content: center; }
+      .panel-content.left .pill-row { justify-content: center; }
+
+      /* Title size */
+      .panel-title { font-size: clamp(36px, 10vw, 56px); margin-bottom: 16px; }
+
+      /* Grid about — stack */
+      .panel-content.grid-2 {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 22px;
+        overflow-y: auto;
+        max-height: calc(100vh - 80px);
+        padding-top: 72px;
+        padding-bottom: 32px;
+      }
+      .photo-frame { aspect-ratio: 3/2; max-height: 200px; }
+
+      /* Pills wrap nicely */
+      .pill { font-size: 12px; padding: 6px 14px; }
+
+      /* Stats */
+      .stat-row { gap: 24px; margin: 20px 0; }
+      .stat-num { font-size: 36px; }
+      .stat-label { font-size: 11px; }
+
+      /* Buttons */
+      .btn { padding: 12px 24px; font-size: 11px; }
+
+      /* Panel text */
+      .panel-text { font-size: 14px; margin-bottom: 22px; }
+
+      /* Eyebrow */
+      .eyebrow { margin-bottom: 12px; }
+
+      /* Cred list compact */
+      .cred-list { gap: 10px; }
+      .cred-item { padding-bottom: 10px; }
+      .cred-val { font-size: 13px; }
+    }
+
+    /* Very small phones */
+    @media (max-width: 390px) {
+      .panel-title { font-size: 32px; }
+      .stat-num { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-logo">Мария Литвинская</span>
+    <ul class="nav-links">
+      <li><a href="#" onclick="scrollToPanel(1);return false;" data-ru="Обо мне" data-en="About"></a></li>
+      <li><a href="#" onclick="scrollToPanel(2);return false;" data-ru="Методы" data-en="Methods"></a></li>
+      <li><a href="#" onclick="scrollToPanel(3);return false;" data-ru="Запросы" data-en="Issues"></a></li>
+      <li><a href="contacts.html" data-ru="Контакты" data-en="Contacts"></a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Меню" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#" onclick="scrollToPanel(0);closeMenu();return false;" data-ru="Главная" data-en="Home"></a>
+    <a href="#" onclick="scrollToPanel(1);closeMenu();return false;" data-ru="Обо мне" data-en="About"></a>
+    <a href="#" onclick="scrollToPanel(2);closeMenu();return false;" data-ru="Методы" data-en="Methods"></a>
+    <a href="#" onclick="scrollToPanel(3);closeMenu();return false;" data-ru="Запросы" data-en="Issues"></a>
+    <a href="contacts.html" data-ru="Контакты" data-en="Contacts"></a>
+  </div>
+
+  <!-- LANG -->
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('ru')" id="btn-ru">RU</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+  </div>
+
+  <!-- SIDE DOTS -->
+  <div class="side-dots" id="sideDots">
+    <button class="side-dot active" onclick="scrollToPanel(0)" title="Главная"></button>
+    <button class="side-dot" onclick="scrollToPanel(1)" title="Обо мне"></button>
+    <button class="side-dot" onclick="scrollToPanel(2)" title="Методы"></button>
+    <button class="side-dot" onclick="scrollToPanel(3)" title="Запросы"></button>
+    <button class="side-dot" onclick="scrollToPanel(4)" title="Контакт"></button>
+  </div>
+
+  <!-- SCROLL INDICATOR -->
+  <div class="scroll-indicator" id="scrollHint">
+    <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+    <span data-lang="ru" class="visible">Листать</span>
+    <span data-lang="en">Scroll</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PANELS
+  ═══════════════════════════════════════════ -->
+  <div class="scroll-wrap" id="scrollWrap">
+
+    <!-- ① HERO -->
+    <div class="panel" data-index="0">
+      <div class="panel-bg bg1">
+        <!--
+          ФОТО ДЛЯ ФОНУ — вставити тут:
+          <img src="hero-bg.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+        -->
+      </div>
+      <div class="panel-overlay"></div>
+      <div class="panel-content left">
+        <p class="eyebrow">
+          <span data-lang="ru" class="visible">Психолог-консультант · онлайн</span>
+          <span data-lang="en">Psychologist &amp; Therapist · online</span>
+        </p>
+        <h1 class="panel-title">
+          <span data-lang="ru" class="visible">Мария<br><em>Литвинская</em></span>
+          <span data-lang="en">Mariia<br><em>Litvinskaia</em></span>
+        </h1>
+        <div class="panel-line"></div>
+        <p class="panel-text">
+          <span data-lang="ru" class="visible">Схема-терапия, КПТ и навыки ДПТ — для тех, кто хочет лучше понять себя и двигаться вперёд.</span>
+          <span data-lang="en">Schema therapy, CBT &amp; DBT skills — for those ready to understand themselves and move forward.</span>
+        </p>
+        <div class="btn-row">
+          <a href="contacts.html" class="btn btn-light">
+            <span data-lang="ru" class="visible">Записаться</span>
+            <span data-lang="en">Book a session</span>
+          </a>
+          <a href="#" onclick="scrollToPanel(1);return false;" class="btn btn-ghost">
+            <span data-lang="ru" class="visible">Узнать больше</span>
+            <span data-lang="en">Learn more</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② ABOUT -->
+    <div class="panel" data-index="1">
+      <div class="panel-bg bg2">
+        <!--
+          ФОТО ДЛЯ ФОНУ:
+          <img src="about-bg.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+        -->
+      </div>
+      <div class="panel-overlay" style="background:linear-gradient(to right,rgba(0,0,0,.7) 0%,rgba(0,0,0,.25) 100%)"></div>
+      <div class="panel-content grid-2">
+        <!-- Photo frame left -->
+        <div class="photo-frame">
+          <!--
+            ФОТО ПОРТРЕТ:
+            <img src="portrait.jpg" style="width:100%;height:100%;object-fit:cover">
+          -->
+          <span class="photo-frame-label">
+            <span data-lang="ru" class="visible">Фото — портрет</span>
+            <span data-lang="en">Portrait photo</span>
+          </span>
+        </div>
+        <!-- Text right -->
+        <div>
+          <p class="eyebrow">
+            <span data-lang="ru" class="visible">Обо мне</span>
+            <span data-lang="en">About me</span>
+          </p>
+          <h2 class="panel-title" style="font-size:clamp(32px,4.5vw,56px)">
+            <span data-lang="ru" class="visible">Кто я и<br>как работаю</span>
+            <span data-lang="en">Who I am &amp;<br>how I work</span>
+          </h2>
+          <div class="panel-line"></div>
+          <p class="panel-text" style="margin-left:0">
+            <span data-lang="ru" class="visible">Меня зовут <strong style="color:#fff">Мария Литвинская</strong>. Я психолог-консультант, работаю в подходах схема-терапии, КПТ и ДПТ. Работаю онлайн — с людьми из разных стран, на русском и английском.</span>
+            <span data-lang="en">My name is <strong style="color:#fff">Mariia Litvinskaia</strong>. I'm a counselling psychologist working with schema therapy, CBT and DBT skills. I work online with clients worldwide, in Russian and English.</span>
+          </p>
+          <div class="cred-list">
+            <div class="cred-item">
+              <div class="cred-dot"></div>
+              <div>
+                <div class="cred-label"><span data-lang="ru" class="visible">Образование</span><span data-lang="en">Education</span></div>
+                <div class="cred-val">
+                  <span data-lang="ru" class="visible">Московский государственный психолого-педагогический университет, специальность «Психология»</span>
+                  <span data-lang="en">Moscow State University of Psychology &amp; Education, Psychology — diploma recognised in Germany</span>
+                </div>
+              </div>
+            </div>
+            <div class="cred-item">
+              <div class="cred-dot"></div>
+              <div>
+                <div class="cred-label"><span data-lang="ru" class="visible">Диплом</span><span data-lang="en">Diploma</span></div>
+                <div class="cred-val">
+                  <span data-lang="ru" class="visible">Официально признан в Германии</span>
+                  <span data-lang="en">Officially recognised in Germany</span>
+                </div>
+              </div>
+            </div>
+            <div class="cred-item">
+              <div class="cred-dot"></div>
+              <div>
+                <div class="cred-label"><span data-lang="ru" class="visible">Подготовка</span><span data-lang="en">Training</span></div>
+                <div class="cred-val">Schema therapy · CBT · DBT skills</div>
+              </div>
+            </div>
+            <div class="cred-item">
+              <div class="cred-dot"></div>
+              <div>
+                <div class="cred-label"><span data-lang="ru" class="visible">Формат</span><span data-lang="en">Format</span></div>
+                <div class="cred-val">Zoom · 60 min · <span data-lang="ru" class="visible">онлайн</span><span data-lang="en">online</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ METHODS -->
+    <div class="panel" data-index="2">
+      <div class="panel-bg bg3">
+        <!--
+          ФОТО ДЛЯ ФОНУ:
+          <img src="methods-bg.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+        -->
+      </div>
+      <div class="panel-overlay"></div>
+      <div class="panel-content">
+        <p class="eyebrow">
+          <span data-lang="ru" class="visible">Доказательный подход</span>
+          <span data-lang="en">Evidence-based approach</span>
+        </p>
+        <h2 class="panel-title">
+          <span data-lang="ru" class="visible">Методы<br><em>работы</em></span>
+          <span data-lang="en">Methods &amp;<br><em>approaches</em></span>
+        </h2>
+        <div class="panel-line"></div>
+        <div class="pill-row">
+          <div class="pill gold">
+            <span data-lang="ru" class="visible">Схема-терапия</span>
+            <span data-lang="en">Schema therapy</span>
+          </div>
+          <div class="pill">
+            <span data-lang="ru" class="visible">Когнитивно-поведенческая терапия (КПТ)</span>
+            <span data-lang="en">Cognitive behavioural therapy (CBT)</span>
+          </div>
+          <div class="pill">
+            <span data-lang="ru" class="visible">Навыки из диалектической поведенческой терапии (ДПТ)</span>
+            <span data-lang="en">DBT skills</span>
+          </div>
+        </div>
+        <p class="panel-text">
+          <span data-lang="ru" class="visible">Все методы клинически проверены. Мы выбираем подход вместе — исходя из вашего запроса и целей.</span>
+          <span data-lang="en">All methods are clinically validated. We choose the approach together, based on your needs and goals.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ④ PROBLEMS -->
+    <div class="panel" data-index="3">
+      <div class="panel-bg bg4">
+        <!--
+          ФОТО ДЛЯ ФОНУ:
+          <img src="problems-bg.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+        -->
+      </div>
+      <div class="panel-overlay" style="background:linear-gradient(to left,rgba(0,0,0,.6) 0%,rgba(0,0,0,.3) 100%)"></div>
+      <div class="panel-content left">
+        <p class="eyebrow">
+          <span data-lang="ru" class="visible">С чем ко мне обращаются</span>
+          <span data-lang="en">What people come with</span>
+        </p>
+        <h2 class="panel-title">
+          <span data-lang="ru" class="visible">Запросы<br><em>и темы</em></span>
+          <span data-lang="en">Topics &amp;<br><em>Issues</em></span>
+        </h2>
+        <div class="panel-line"></div>
+        <div class="pill-row">
+          <div class="pill"><span data-lang="ru" class="visible">Тревога</span><span data-lang="en">Anxiety</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Выгорание</span><span data-lang="en">Burnout</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Депрессия</span><span data-lang="en">Depression</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Отношения</span><span data-lang="en">Relationships</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Панические атаки</span><span data-lang="en">Panic attacks</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Навязчивые мысли</span><span data-lang="en">Intrusive thoughts</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Фобии</span><span data-lang="en">Phobias</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Тяжёлые события</span><span data-lang="en">Grief &amp; loss</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Стресс и эмоциональное перенапряжение</span><span data-lang="en">Stress &amp; emotional overwhelm</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Неуверенность в себе</span><span data-lang="en">Lack of self-confidence</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Самооценка</span><span data-lang="en">Self-esteem</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Самокритика</span><span data-lang="en">Self-criticism</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Перфекционизм</span><span data-lang="en">Perfectionism</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Чувство вины и стыда</span><span data-lang="en">Guilt &amp; shame</span></div>
+          <div class="pill"><span data-lang="ru" class="visible">Поиск ценностей и ориентиров</span><span data-lang="en">Finding values &amp; life direction</span></div>
+          <div class="pill gold"><span data-lang="ru" class="visible">Понимание своих потребностей</span><span data-lang="en">Understanding your needs</span></div>
+        </div>
+        <div class="stat-row">
+          <div>
+            <div class="stat-num">60'</div>
+            <div class="stat-label"><span data-lang="ru" class="visible">одна сессия</span><span data-lang="en">per session</span></div>
+          </div>
+          <div>
+            <div class="stat-num">2</div>
+            <div class="stat-label"><span data-lang="ru" class="visible">языка — RU / EN</span><span data-lang="en">languages — RU / EN</span></div>
+          </div>
+          <div>
+            <div class="stat-num">∞</div>
+            <div class="stat-label"><span data-lang="ru" class="visible">любая страна, онлайн</span><span data-lang="en">any country, online</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑤ CTA / CONTACT -->
+    <div class="panel" data-index="4">
+      <div class="panel-bg bg5">
+        <!--
+          ФОТО ДЛЯ ФОНУ:
+          <img src="cta-bg.jpg" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+        -->
+      </div>
+      <div class="panel-overlay" style="background:rgba(0,0,0,.55)"></div>
+      <div class="panel-content">
+        <p class="eyebrow">
+          <span data-lang="ru" class="visible">Первый шаг</span>
+          <span data-lang="en">First step</span>
+        </p>
+        <h2 class="panel-title">
+          <span data-lang="ru" class="visible">Готовы<br><em>начать?</em></span>
+          <span data-lang="en">Ready to<br><em>begin?</em></span>
+        </h2>
+        <div class="panel-line"></div>
+        <p class="panel-text">
+          <span data-lang="ru" class="visible">Напишите мне — я отвечу в течение 24 часов. Первая встреча без давления: просто познакомимся.</span>
+          <span data-lang="en">Write to me — I reply within 24 hours. The first session is no-obligation: we simply get to know each other.</span>
+        </p>
+        <div class="btn-row">
+          <a href="contacts.html" class="btn btn-light">
+            <span data-lang="ru" class="visible">Записаться</span>
+            <span data-lang="en">Book a session</span>
+          </a>
+        </div>
+        <p style="margin-top:48px;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.06em">
+          © 2025 Мария Литвинская —
+          <span data-lang="ru" class="visible">Психолог-консультант</span>
+          <span data-lang="en">Psychologist</span>
+        </p>
+      </div>
+    </div>
+
+  </div><!-- /scroll-wrap -->
+
+    /* ── MOBILE MENU ── */
+    function toggleMenu() {
+      const m = document.getElementById('mobileMenu');
+      const h = document.getElementById('hamburger');
+      m.classList.toggle('open');
+      h.classList.toggle('open');
+    }
+    function closeMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('hamburger').classList.remove('open');
+    }
+    // init mobile menu link text
+    document.querySelectorAll('#mobileMenu [data-ru]').forEach(a => { a.textContent = a.dataset.ru; });
+
+    /* ── i18n ── */
+    function setLang(lang) {
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        el.classList.toggle('visible', el.dataset.lang === lang);
+      });
+      document.getElementById('btn-ru').classList.toggle('active', lang === 'ru');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.querySelectorAll('[data-ru]').forEach(a => {
+        a.textContent = lang === 'ru' ? a.dataset.ru : a.dataset.en;
+      });
+    }
+    document.querySelectorAll('[data-ru]').forEach(a => { a.textContent = a.dataset.ru; });
+
+    /* ── PANEL ACTIVATION ── */
+    const wrap = document.getElementById('scrollWrap');
+    const panels = document.querySelectorAll('.panel');
+    const sideDots = document.querySelectorAll('.side-dot');
+    const scrollHint = document.getElementById('scrollHint');
+
+    let currentIdx = 0;
+
+    function activatePanel(idx) {
+      panels.forEach((p, i) => p.classList.toggle('is-active', i === idx));
+      sideDots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      currentIdx = idx;
+      // Hide scroll hint after first panel
+      scrollHint.style.opacity = idx === 0 ? '1' : '0';
+    }
+
+    // Intersection observer for snap scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          const idx = parseInt(entry.target.dataset.index);
+          activatePanel(idx);
+        }
+      });
+    }, { root: wrap, threshold: 0.5 });
+
+    panels.forEach(p => observer.observe(p));
+
+    // Activate first panel on load
+    setTimeout(() => activatePanel(0), 100);
+
+    /* ── NAVIGATE ── */
+    function scrollToPanel(idx) {
+      panels[idx].scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
