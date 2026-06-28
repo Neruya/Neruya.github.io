@@ -522,25 +522,15 @@
               <span data-lang="en">Leave a request — I'll get in touch to confirm.</span>
             </p>
 
-            <!-- Web3Forms — безкоштовно, необмежено -->
-            <form id="contactForm"
-                  action="https://api.web3forms.com/submit"
-                  method="POST"
-                  autocomplete="off">
-
-              <!-- Web3Forms access key -->
-              <input type="hidden" name="access_key" value="2aea516b-1b1e-4ea4-97cb-faa7b85a7766">
-              <!-- Тема листа -->
-              <input type="hidden" name="subject" value="Новая заявка с сайта Марии">
-              <!-- Redirect після відправки (залишаємо порожнім — обробляємо JS) -->
-              <input type="hidden" name="redirect" value="false">
+            <!-- EmailJS -->
+            <form id="contactForm" autocomplete="off">
 
               <div class="field">
                 <label>
                   <span data-lang="ru" class="visible">Ваше имя</span>
                   <span data-lang="en">Your name</span>
                 </label>
-                <input type="text" name="Имя" required
+                <input type="text" name="name" id="f_name" required
                   placeholder="Имя / Name" />
               </div>
 
@@ -549,7 +539,7 @@
                   <span data-lang="ru" class="visible">Email или Telegram</span>
                   <span data-lang="en">Email or Telegram</span>
                 </label>
-                <input type="text" name="Контакт (email или Telegram)" required
+                <input type="text" name="contact" id="f_contact" required
                   placeholder="email@example.com / @telegram" />
               </div>
 
@@ -558,9 +548,8 @@
                   <span data-lang="ru" class="visible">Удобное время</span>
                   <span data-lang="en">Preferred time</span>
                 </label>
-                <select name="Удобное время">
-                  <option value="" disabled selected>
-                  </option>
+                <select name="time" id="f_time">
+                  <option value="" disabled selected></option>
                   <option value="Утро (9–12)" data-ru="Утро (9–12)" data-en="Morning (9–12)"></option>
                   <option value="День (12–17)" data-ru="День (12–17)" data-en="Afternoon (12–17)"></option>
                   <option value="Вечер (17–21)" data-ru="Вечер (17–21)" data-en="Evening (17–21)"></option>
@@ -573,12 +562,8 @@
                   <span data-lang="ru" class="visible">Тема или вопрос (необязательно)</span>
                   <span data-lang="en">Topic or question (optional)</span>
                 </label>
-                <textarea name="Сообщение"
-                  placeholder="..."></textarea>
+                <textarea name="message" id="f_message" placeholder="..."></textarea>
               </div>
-
-              <!-- Honeypot anti-spam (Web3Forms підтримує) -->
-              <input type="checkbox" name="botcheck" style="display:none">
 
               <p class="form-note">
                 <span data-lang="ru" class="visible">Нажимая кнопку, вы соглашаетесь на обратную связь от меня для уточнения деталей.</span>
@@ -610,8 +595,9 @@
     </div>
   </div>
 
-  <p class="page-footer">© 2025 Мария Литвинская — Психолог</p>
+  <p class="page-footer">© 2026 Мария Литвинская — Психолог</p>
 
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     /* ── i18n ── */
     function setLang(lang) {
@@ -638,12 +624,14 @@
 
     // Init option text + select placeholder
     document.querySelectorAll('option[data-ru]').forEach(o => { o.textContent = o.dataset.ru; });
-    document.querySelector('select[name="Удобное время"]').options[0].text = 'Выберите время';
+    document.querySelector('select[name="time"]').options[0].text = 'Выберите время';
 
     // Очистити форму при завантаженні
     document.getElementById('contactForm').reset();
 
-    /* ── FORM SUBMIT ── */
+    /* ── EMAILJS ── */
+    emailjs.init('H7MnTGj7kyJpAcLmc');
+
     const form = document.getElementById('contactForm');
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -651,31 +639,28 @@
       btn.style.opacity = '.5';
       btn.disabled = true;
 
+      const params = {
+        name:    document.getElementById('f_name').value,
+        contact: document.getElementById('f_contact').value,
+        time:    document.getElementById('f_time').value || '—',
+        message: document.getElementById('f_message').value || '—',
+      };
+
       try {
-        const res = await fetch(form.action, {
-          method: 'POST',
-          body: new FormData(form),
-          headers: { 'Accept': 'application/json' }
+        await emailjs.send('service_yks5duy', 'template_jy4uixk', params);
+        form.reset();
+        document.getElementById('formWrap').style.display = 'none';
+        const suc = document.getElementById('formSuccess');
+        suc.classList.add('show');
+        const lang = document.getElementById('btn-ru').classList.contains('active') ? 'ru' : 'en';
+        document.querySelectorAll('#formSuccess [data-lang]').forEach(el => {
+          el.classList.toggle('visible', el.dataset.lang === lang);
         });
-        const data = await res.json();
-        if (data.success) {
-          form.reset();
-          document.getElementById('formWrap').style.display = 'none';
-          const suc = document.getElementById('formSuccess');
-          suc.classList.add('show');
-          const lang = document.getElementById('btn-ru').classList.contains('active') ? 'ru' : 'en';
-          document.querySelectorAll('#formSuccess [data-lang]').forEach(el => {
-            el.classList.toggle('visible', el.dataset.lang === lang);
-          });
-        } else {
-          btn.style.opacity = '1';
-          btn.disabled = false;
-          alert('Что-то пошло не так. Напишите напрямую.');
-        }
-      } catch {
+      } catch(err) {
         btn.style.opacity = '1';
         btn.disabled = false;
-        alert('Ошибка соединения. Попробуйте ещё раз.');
+        alert('Ошибка отправки. Напишите напрямую.');
+        console.error(err);
       }
     });
   </script>
