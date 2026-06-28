@@ -565,7 +565,11 @@
                 <textarea name="message" id="f_message" placeholder="..."></textarea>
               </div>
 
-              <p class="form-note">
+              <!-- Honeypot антибот — прихований від людей, видний ботам -->
+              <input type="text" name="company" tabindex="-1" autocomplete="off"
+                style="position:absolute;left:-9999px;opacity:0;height:0;width:0;">
+
+
                 <span data-lang="ru" class="visible">Нажимая кнопку, вы соглашаетесь на обратную связь от меня для уточнения деталей.</span>
                 <span data-lang="en">By submitting you agree to be contacted by me to discuss the details.</span>
               </p>
@@ -633,8 +637,20 @@
     emailjs.init('H7MnTGj7kyJpAcLmc');
 
     const form = document.getElementById('contactForm');
+    let lastSend = 0;
+
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
+
+      // 🛡️ Honeypot — якщо бот заповнив приховане поле — ігноруємо
+      if (form.querySelector('[name="company"]').value) return;
+
+      // 🛡️ Дебаунс — не більше одного відправлення кожні 15 секунд
+      if (Date.now() - lastSend < 15000) {
+        alert('Подождите немного перед повторной отправкой.');
+        return;
+      }
+
       const btn = form.querySelector('.btn-submit');
       btn.style.opacity = '.5';
       btn.disabled = true;
@@ -648,6 +664,7 @@
 
       try {
         await emailjs.send('service_yks5duy', 'template_jy4uixk', params);
+        lastSend = Date.now();
         form.reset();
         document.getElementById('formWrap').style.display = 'none';
         const suc = document.getElementById('formSuccess');
